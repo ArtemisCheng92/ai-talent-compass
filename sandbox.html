@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>AI 人才模型遊樂場｜自由分群版本</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --bg: #f3fbf7;
+            --panel: #dde7f5;
+            --card: #f5f7fb;
+            --card-strong: #e4ecf8;
+            --border: #7c8ba5;
+            --accent: #f97316;
+            --accent-soft: #ffedd5;
+            --text: #0f172a;
+            --muted: #4b5563;
+            --radius-xl: 22px;
+            --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.18);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans TC",
+                "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, #e0f2fe 0, #f3fbf7 40%, #ecfdf3 100%);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 18px;
+        }
+
+        .shell {
+            max-width: 1120px;
+            margin: 28px auto 40px;
+            padding: 0 16px;
+        }
+
+        header {
+            background: rgba(15, 23, 42, 0.96);
+            color: #e5e7eb;
+            padding: 18px 20px;
+            border-radius: 26px;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+        }
+
+        header .title-block {
+            flex: 1 1 260px;
+        }
+
+        header h1 {
+            margin: 0 0 6px;
+            font-size: 1.8rem;
+            letter-spacing: 0.03em;
+        }
+
+        header p {
+            margin: 0;
+            font-size: 0.98rem;
+            color: #cbd5f5;
+        }
+
+        header .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 210px;
+            align-items: flex-end;
+            font-size: 0.96rem;
+        }
+
+        header .nav a {
+            color: #e5e7eb;
+            text-decoration: none;
+            opacity: 0.9;
+        }
+
+        main {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: minmax(0, 3fr) minmax(0, 4fr);
+            gap: 18px;
+        }
+
+        @media (max-width: 960px) {
+            main {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            header .nav {
+                align-items: flex-start;
+            }
+        }
+
+        .panel {
+            background: var(--panel);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            padding: 16px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .panel h2 {
+            margin: 0 0 8px;
+            font-size: 1.35rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge {
+            font-size: 0.9rem;
+            padding: 3px 9px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.12);
+            color: #e5e7eb;
+        }
+
+        .desc {
+            margin: 0 0 10px;
+            font-size: 0.96rem;
+            color: var(--muted);
+        }
+
+        .step-card {
+            background: var(--card);
+            border-radius: 18px;
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            padding: 12px 14px;
+            margin-top: 10px;
+        }
+
+        .step-title {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 4px;
+        }
+
+        .note {
+            font-size: 0.92rem;
+            color: var(--muted);
+            margin: 4px 0 0;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+            border-radius: 999px;
+            padding: 3px 10px;
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            background: #ffffff;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        .status-pill.ok {
+            border-color: #16a34a;
+            color: #166534;
+        }
+
+        .status-pill.warn {
+            border-color: #f97316;
+            color: #9a3412;
+        }
+
+        .k-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        /* k 選擇 pill 按鈕 */
+        .k-pill {
+            min-width: 72px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            background: #ffffff;
+            /* 未選：白底 */
+            color: #0f172a;
+            /* 未選：深色文字，一定看得到 */
+            padding: 4px 12px;
+            font-size: 0.94rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+            transition: all 0.18s ease-out;
+        }
+
+        .k-pill:hover {
+            box-shadow: 0 6px 12px rgba(15, 118, 110, 0.18);
+        }
+
+        .k-pill.active {
+            background: #0f766e;
+            /* 已選：綠底白字 */
+            color: #ffffff;
+            border-color: #0f766e;
+            box-shadow: 0 10px 20px rgba(15, 118, 110, 0.4);
+        }
+
+
+        input[type="number"] {
+            font-size: 0.94rem;
+            padding: 4px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            background: #f9fafb;
+            width: 80px;
+        }
+
+        button {
+            border-radius: 999px;
+            border: none;
+            padding: 8px 15px;
+            font-size: 0.96rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(to right, #0f766e, #22c55e);
+            color: white;
+            box-shadow: 0 8px 16px rgba(34, 197, 94, 0.4);
+            margin-top: 10px;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: default;
+            box-shadow: none;
+        }
+
+        /* 小型圖右上角的放大按鈕 */
+        .icon-btn {
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.7);
+            background: #ffffff;
+            color: #374151;
+            padding: 4px 12px;
+            /* 稍微加大一點 padding，比較像膠囊 */
+            font-size: 0.85rem;
+            /* 字稍微放大一點點 */
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            white-space: nowrap;
+            /* ⭐ 關鍵：整句不換行 */
+        }
+
+        .icon-btn:hover {
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.18);
+        }
+
+        /* 標題＋按鈕同一行靠兩側 */
+        .step-title-with-icon {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        /* 雷達圖放大用的 modal */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            display: none;
+            /* 預設關閉 */
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+
+        .modal-content {
+            background: #f9fafb;
+            border-radius: 20px;
+            padding: 12px 14px 16px;
+            max-width: 860px;
+            width: 90%;
+            max-height: 90vh;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.98rem;
+        }
+
+        .modal-body {
+            flex: 1;
+            min-height: 360px;
+        }
+
+        .modal-body canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* 放大版雷達圖容器高度再大一點 */
+        .cluster-radar-wrap.global {
+            height: 260px;
+        }
+
+
+
+
+
+        /* 右側結果區 */
+        .cluster-summary {
+            background: #0f172a;
+            color: #e5e7eb;
+            border-radius: 20px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+        }
+
+        .cluster-summary h3 {
+            margin: 0 0 4px;
+            font-size: 1.1rem;
+        }
+
+        .cluster-summary p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: #cbd5f5;
+        }
+
+        .cluster-list {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .cluster-card {
+            background: #f9fafb;
+            border-radius: 16px;
+            padding: 10px 12px;
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            font-size: 0.95rem;
+        }
+
+        .cluster-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .cluster-name {
+            font-weight: 650;
+        }
+
+        .cluster-tag {
+            font-size: 0.82rem;
+            border-radius: 999px;
+            padding: 2px 8px;
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        .cluster-body p {
+            margin: 2px 0;
+            font-size: 0.9rem;
+        }
+
+        /* 每群的小績效進度條 */
+        .cluster-perf-bar-wrap {
+            margin-top: 6px;
+        }
+
+        .cluster-perf-bar-bg {
+            position: relative;
+            width: 100%;
+            height: 6px;
+            border-radius: 999px;
+            background: #e5e7eb;
+            /* 淺灰底 */
+            overflow: hidden;
+        }
+
+        .cluster-perf-bar-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            border-radius: 999px;
+            /* 顏色會在 JS 裡依高於 / 低於平均決定 */
+        }
+
+        .cluster-perf-bar-label {
+            margin-top: 2px;
+            font-size: 0.82rem;
+            color: #6b7280;
+        }
+
+
+
+
+        .cluster-baseline-box {
+            margin-top: 10px;
+            margin-bottom: 12px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: #f1faf7;
+            border: 1px dashed rgba(15, 118, 110, 0.5);
+            font-size: 0.9rem;
+        }
+
+        .cluster-baseline-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #0f766e;
+        }
+
+        .cluster-baseline-list {
+            margin: 0;
+            padding-left: 1.1rem;
+        }
+
+        .cluster-feature-block {
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px dashed #d1d5db;
+        }
+
+        .cluster-feature-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+        }
+
+        .cluster-feature-list {
+            margin: 0;
+            padding-left: 1.1rem;
+            font-size: 0.88rem;
+            color: #374151;
+        }
+
+        .theme-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .theme-select {
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            background: #ffffff;
+            font-size: 0.9rem;
+        }
+
+
+        #overall-chart-container {
+            margin-top: 8px;
+            height: 260px;
+            /* 固定高度 */
+            position: relative;
+        }
+
+        #overall-chart-container canvas {
+            width: 100% !important;
+            /* 讓 Chart.js 填滿容器 */
+            height: 100% !important;
+        }
+
+        /* 分群品質小燈號 */
+        .quality-pill {
+            margin-left: 8px;
+            font-size: 0.82rem;
+            padding: 2px 8px;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            vertical-align: middle;
+        }
+
+        .quality-na {
+            background: rgba(15, 23, 42, 0.06);
+            color: #4b5563;
+            border-color: rgba(148, 163, 184, 0.7);
+        }
+
+        .quality-good {
+            background: #dcfce7;
+            color: #166534;
+            border-color: #16a34a;
+        }
+
+        .quality-ok {
+            background: #fef9c3;
+            color: #92400e;
+            border-color: #facc15;
+        }
+
+        .quality-bad {
+            background: #fee2e2;
+            color: #b91c1c;
+            border-color: #fca5a5;
+        }
+
+        /* 快照列 */
+        .snapshot-row {
+            margin-top: 6px;
+            margin-bottom: 8px;
+            /* ⭐ 與下方內容拉開一點 */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            font-size: 0.88rem;
+        }
+
+        /* 快照比較卡（1-3 裡的小卡） */
+        .snapshot-compare-card {
+            margin-top: 8px;
+            background: #eef2ff;
+            border-radius: 14px;
+            padding: 10px 12px;
+            border: 1px solid rgba(129, 140, 248, 0.7);
+        }
+
+        .snapshot-compare-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 左邊 1-4：雷達圖 + 平均績效排版 */
+        .global-chart-row {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .global-chart-row>div {
+            flex: 1 1 260px;
+        }
+
+        /* 全群雷達圖用較高的容器 */
+        .cluster-radar-wrap.global {
+            height: 260px;
+        }
+
+
+
+
+
+        .snapshot-btn {
+            border-radius: 999px;
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            background: #fff;
+            color: #0f172a;
+            box-shadow: 0 4px 8px rgba(15, 23, 42, 0.12);
+            padding: 4px 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .snapshot-btn:disabled {
+            opacity: 0.4;
+            box-shadow: none;
+            cursor: default;
+        }
+
+        .snapshot-label {
+            color: #4b5563;
+        }
+
+        /* 每群雷達圖容器 */
+        .cluster-radar-wrap {
+            margin-top: 8px;
+            height: 220px;
+            position: relative;
+        }
+
+        .cluster-radar-wrap canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        #radar-chart-card {
+            display: none;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+</head>
+
+<body>
+    <div class="shell">
+        <header>
+            <div class="title-block">
+                <h1>AI 人才模型遊樂場｜自由分群版本</h1>
+                <p>共用同一份研究資料，只調整 k 值（群數），觀察不同分群下的輪廓變化。</p>
+            </div>
+            <div class="nav">
+                <a href="index.html">← 回到模型說明頁</a>
+                <a href="predict.html">🚀 前往實驗用預測 Demo</a>
+            </div>
+        </header>
+
+        <main>
+            <!-- 左：設定分群 -->
+            <section class="panel">
+                <h2>Step 1：設定分群參數 <span class="badge">自由版</span></h2>
+                <p class="desc">
+                    本頁會沿用在 Demo 頁上傳並訓練好的資料與前處理，僅調整 <strong>k（群數）</strong>，觀察各群的平均績效與大致輪廓。
+                </p>
+
+                <div id="model-status" class="status-pill warn">
+                    ⏳ 正在檢查模型狀態…
+                </div>
+
+                <!-- 1-2. k 值設定 -->
+                <div class="step-card">
+                    <div class="step-title">1-2. 選擇分群數 k</div>
+                    <p class="note">
+                        建議先試 <strong>3～5 群</strong>，群數太多會讓每群人太少、輪廓不好讀。你也可以手動輸入其他數字。
+                    </p>
+
+                    <div class="k-row">
+                        <button type="button" class="k-pill active" data-k="3">3 群</button>
+                        <button type="button" class="k-pill" data-k="4">4 群</button>
+                        <button type="button" class="k-pill" data-k="5">5 群</button>
+                        <span style="font-size:0.9rem;">或自訂：</span>
+                        <input type="number" id="k-input" value="3" min="2" max="10" />
+                    </div>
+
+                    <div class="theme-row">
+                        <span style="font-size:0.9rem;">觀察主題：</span>
+                        <select id="theme-select" class="theme-select">
+                            <option value="all">🧩 全部指標一起看</option>
+                            <option value="workload">📊 工作負荷雷達（工時/加班/專案/病假）</option>
+                            <option value="pay">💰 薪資＆資歷（薪水/年資/年齡）</option>
+                            <option value="growth">🌱 成長感＆滿意度（訓練/滿意度）</option>
+                            <option value="team">🤝 團隊型態（團隊大小/遠距頻率）</option>
+                        </select>
+                    </div>
+
+                    <button type="button" id="btn-run-cluster">🔄 重新分群</button>
+                    <p class="note" id="cluster-status">尚未執行分群。</p>
+                </div>
+
+                <!-- 1-3. 分群快照與版本比較 -->
+                <div class="step-card">
+                    <div class="step-title">1-3. 分群快照與版本比較</div>
+
+                    <div class="snapshot-row">
+                        <button type="button" id="btn-save-snapshot" class="snapshot-btn" disabled>
+                            📸 把這次結果存成快照
+                        </button>
+                        <button type="button" id="btn-compare-snapshot" class="snapshot-btn" disabled>
+                            🔍 與快照版本比較
+                        </button>
+                        <span id="snapshot-label" class="snapshot-label">
+                            目前尚未儲存快照
+                        </span>
+                    </div>
+
+                    <div id="snapshot-compare-card" class="snapshot-compare-card" style="display:none;">
+                        <div class="snapshot-compare-title">
+                            <span>📊 與快照版本比較</span>
+                        </div>
+                        <div id="snapshot-compare-body" class="note"></div>
+                    </div>
+                </div>
+
+                <!-- 1-4. 各群整體輪廓：雷達圖＋平均績效 -->
+                <div class="step-card" id="radar-chart-card">
+                    <div class="step-title-with-icon">
+                        <div class="step-title">1-4. 各群整體輪廓（雷達圖＋平均績效）</div>
+                        <button type="button" id="btn-open-radar" class="icon-btn">
+                            🔍 放大檢視
+                        </button>
+                    </div>
+
+                    <p class="note">
+                        雷達圖顯示各群在所有數值指標上相對「全體平均」的比例（1x 表示差不多）。
+                        右邊長條圖則依平均績效由高到低排列。
+                    </p>
+
+                    <div class="global-chart-row">
+                        <!-- 左：小雷達圖 -->
+                        <div class="cluster-radar-wrap global">
+                            <canvas id="multi-radar-canvas"></canvas>
+                        </div>
+                        <!-- 右：各群平均績效（橫條圖） -->
+                        <div id="overall-chart-container">
+                            <canvas id="overall-chart-canvas"></canvas>
+                        </div>
+                    </div>
+
+                    <p class="note" id="radar-highlight-note"></p>
+                </div>
+
+
+
+
+
+                <!-- 雷達圖放大檢視 Modal -->
+                <div id="radar-modal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span>各群雷達圖（放大檢視）</span>
+                            <button type="button" id="btn-close-radar" class="icon-btn">✕ 關閉</button>
+                        </div>
+                        <div class="modal-body">
+                            <canvas id="multi-radar-canvas-large"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+
+
+
+
+            <!-- 右：各群結果 -->
+            <section class="panel">
+                <h2>
+                    Step 2：觀察各群輪廓與平均績效
+                    <span id="cluster-quality-pill" class="quality-pill quality-na">
+                        品質：尚未分析
+                    </span>
+                </h2>
+
+                <div class="cluster-summary" id="cluster-summary">
+                    <h3>尚未執行分群</h3>
+                    <p>請先在左側選擇 k 值，按下「重新分群」。</p>
+                </div>
+
+                <div id="cluster-list-wrapper">
+                    <div class="step-card">
+                        <p class="note">
+                            還沒有任何結果。完成第一次分群後，這裡會依序列出每一群的人數、平均績效與簡短說明。
+                        </p>
+                    </div>
+                </div>
+
+
+
+
+            </section>
+
+
+
+
+
+
+        </main>
+    </div>
+
+    <script>
+        const API_BASE = "http://127.0.0.1:8000";
+
+        const FEATURE_LABELS = {
+            Monthly_Salary: "月薪",
+            Age: "年齡",
+            Years_At_Company: "年資",
+            Work_Hours_Per_Week: "每週工時",
+            Overtime_Hours: "加班時數",
+            Sick_Days: "請病假天數",
+            Remote_Work_Frequency: "遠距頻率",
+            Team_Size: "團隊人數",
+            Projects_Handled: "負責專案數",
+            Training_Hours: "訓練時數",             // 新增
+            Employee_Satisfaction_Score: "滿意度", // 新增
+            Performance_Score: "績效分數"
+        };
+
+        // 根據該群平均績效 vs 整體，生出一個暱稱＋ emoji
+        function getClusterNickname(cluster, overallMean) {
+            const perf = cluster.mean_performance ?? overallMean;
+            const ratio = overallMean ? perf / overallMean : 1;
+
+            let emoji = "⚖️";
+            let label = "中等輪廓";
+
+            if (ratio >= 1.10) {
+                emoji = "🟢";
+                label = "高績效群";
+            } else if (ratio <= 0.90) {
+                emoji = "🟠";
+                label = "需關注群";
+            }
+
+            return { emoji, label };
+        }
+
+        // 用該群差異最大的幾個指標，組成一句「群組小故事」
+        function makeStoryLine(displayItems) {
+            if (!displayItems || !displayItems.length) return "";
+
+            const first = displayItems[0];
+            const second = displayItems[1];
+
+            const label1 = FEATURE_LABELS[first.feature] || first.feature;
+            const dir1 = first.cluster_mean > first.global_mean ? "偏高" : "偏低";
+
+            if (!second) {
+                return `這群人在「${label1}」上明顯${dir1}。`;
+            }
+
+            const label2 = FEATURE_LABELS[second.feature] || second.feature;
+            const dir2 = second.cluster_mean > second.global_mean ? "偏高" : "偏低";
+
+            return `這群人「${label1}」${dir1}，且「${label2}」${dir2}，是很有代表性的輪廓。`;
+        }
+
+
+
+
+        let lastClusterData = null;
+        let activeCharts = []; // 用來管理圖表實例，避免切換時記憶體殘留
+        let overallPerfChart = null; // ⭐ 新增：所有群平均績效的 chart
+        let multiRadarChart = null;        // 左側小張雷達圖
+        let multiRadarChartLarge = null;   // 放大版雷達圖
+
+
+
+
+
+
+        function formatNumber(x, digits = 1) {
+            if (x === null || x === undefined || Number.isNaN(x)) return "-";
+            return Number(x).toFixed(digits);
+        }
+
+        let snapshotData = null;   // 儲存快照用
+        let snapshotMeta = null;   // 快照的摘要資訊（方便顯示比較）
+
+        function deepClone(obj) {
+            if (!obj) return obj;
+            if (window.structuredClone) return structuredClone(obj);
+            return JSON.parse(JSON.stringify(obj));
+        }
+
+
+
+
+        // 定義每個主題要看哪些欄位
+        function getThemeKeys(globalMeans) {
+            const themeSelect = document.getElementById("theme-select");
+            const theme = themeSelect ? themeSelect.value : "workload";
+
+            let keys;
+            if (theme === "workload") {
+                keys = ["Work_Hours_Per_Week", "Overtime_Hours", "Projects_Handled", "Sick_Days"];
+            } else if (theme === "pay") {
+                keys = ["Monthly_Salary", "Years_At_Company", "Age"];
+            } else if (theme === "growth") {
+                keys = ["Training_Hours", "Employee_Satisfaction_Score"];
+            } else if (theme === "team") {
+                keys = ["Team_Size", "Remote_Work_Frequency"];
+            } else {
+                // 選全部時，顯示後端回傳的所有特徵
+                keys = Object.keys(globalMeans || {});
+            }
+            // 過濾掉不存在於 globalMeans 的 key，避免報錯
+            return keys.filter(
+                (k) => globalMeans && Object.prototype.hasOwnProperty.call(globalMeans, k)
+            );
+        }
+
+        function evaluateClusterQuality(data) {
+            const clusters = data.clusters || [];
+            if (!clusters.length) return null;
+
+            const k = data.k || clusters.length;
+            const n = data.n_samples || 0;
+
+            const props = clusters.map(c => {
+                if (typeof c.proportion === "number") return c.proportion;
+                if (n > 0 && typeof c.n_samples === "number") return c.n_samples / n;
+                return 0;
+            });
+
+            const perfs = clusters.map(c => c.mean_performance ?? 0);
+
+            const minP = Math.min(...props);
+            const maxP = Math.max(...props);
+            const perfRange = Math.max(...perfs) - Math.min(...perfs);
+
+            let level = "good";
+            const reasons = [];
+
+            // 有超小群或超大群
+            if (minP < 0.03 || maxP > 0.60) {
+                level = "ok";
+                reasons.push("有人數極小或極大的群");
+            }
+
+            // 群間績效差異太小
+            if (perfRange < 0.25) {
+                level = level === "good" ? "ok" : "bad";
+                reasons.push("各群平均績效差異不大");
+            }
+
+            // k 太大，容易 over-segmentation
+            if (k > 8) {
+                level = level === "good" ? "ok" : "bad";
+                reasons.push("分群數偏多，可能過度切割");
+            }
+
+            return {
+                level,
+                k,
+                minP,
+                maxP,
+                perfRange,
+                reasonText: reasons.length
+                    ? reasons.join("、")
+                    : "群數分布與績效差異都還算清楚",
+            };
+        }
+
+        function updateClusterQualityPill(data) {
+            const pill = document.getElementById("cluster-quality-pill");
+            if (!pill) return;
+
+            const q = evaluateClusterQuality(data);
+            if (!q) {
+                pill.className = "quality-pill quality-na";
+                pill.textContent = "品質：尚未分析";
+                pill.title = "";
+                return;
+            }
+
+            let label;
+            if (q.level === "good") label = "品質：🟢 穩定";
+            else if (q.level === "ok") label = "品質：🟡 待觀察";
+            else label = "品質：🔴 建議調整";
+
+            pill.className = `quality-pill quality-${q.level}`;
+            pill.textContent = label;
+            pill.title =
+                `k = ${q.k}；最小群約 ${(q.minP * 100).toFixed(1)}%` +
+                `，最大群約 ${(q.maxP * 100).toFixed(1)}%，` +
+                `各群平均績效差距約 ${q.perfRange.toFixed(2)} 分。\n` +
+                q.reasonText;
+        }
+
+        function clusterDisplayName(c) {
+            return c.display_name || `第 ${c.cluster_id + 1} 群`;
+        }
+
+        /** 建立「多群雷達圖」的 Chart.js 設定，給小圖 & 放大圖共用 */
+        function buildMultiRadarConfig(clusters, globalMeans) {
+            const featureKeys = Object.keys(globalMeans || {});
+            const labelsRadar = featureKeys.map((k) => FEATURE_LABELS[k] || k);
+
+            // 沒有特徵就給一個空圖，避免報錯
+            if (!featureKeys.length || !clusters.length) {
+                return {
+                    type: "radar",
+                    data: { labels: [], datasets: [] },
+                    options: { responsive: true, maintainAspectRatio: false },
+                };
+            }
+
+            // 給不同群一組顏色
+            const fillColors = [
+                "rgba(34, 197, 94, 0.28)",   // 綠
+                "rgba(59, 130, 246, 0.28)",  // 藍
+                "rgba(245, 158, 11, 0.28)",  // 橘
+                "rgba(244, 63, 94, 0.28)",   // 桃紅
+                "rgba(139, 92, 246, 0.28)",  // 紫
+                "rgba(14, 165, 233, 0.28)",  // 青
+            ];
+            const borderColors = [
+                "rgba(22, 163, 74, 1)",
+                "rgba(37, 99, 235, 1)",
+                "rgba(217, 119, 6, 1)",
+                "rgba(190, 24, 93, 1)",
+                "rgba(124, 58, 237, 1)",
+                "rgba(2, 132, 199, 1)",
+            ];
+
+            const datasets = clusters.map((c, idx) => {
+                const fm = c.feature_means || {};
+                const data = featureKeys.map((key) => {
+                    const g = globalMeans[key];
+                    const v = fm[key];
+                    if (g == null || g === 0 || v == null) return 1; // 沒資料先當作接近平均
+                    return v / g; // 比例：本群 / 全體
+                });
+
+                return {
+                    label: clusterDisplayName(c),
+                    data,
+                    backgroundColor: fillColors[idx % fillColors.length],
+                    borderColor: borderColors[idx % borderColors.length],
+                    borderWidth: 2,
+                    pointRadius: 2,
+                    pointHoverRadius: 4,
+                    fill: true,
+                };
+            });
+
+            return {
+                type: "radar",
+                data: {
+                    labels: labelsRadar,
+                    datasets,
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: "top",
+                            labels: {
+                                boxWidth: 14,
+                                font: { size: 11 },
+                            },
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label(ctx) {
+                                    const dsLabel = ctx.dataset.label || "";
+                                    const v = Number(ctx.raw ?? 0);
+                                    return `${dsLabel}: ${v.toFixed(2)}x`;
+                                },
+                            },
+                        },
+                    },
+                    scales: {
+                        r: {
+                            // 以「1x」為中心上下各留一點空間
+                            suggestedMin: 0.6,
+                            suggestedMax: 1.4,
+                            angleLines: { color: "rgba(148, 163, 184, 0.4)" },
+                            grid: { color: "rgba(148, 163, 184, 0.25)" },
+                            pointLabels: {
+                                font: { size: 11 },
+                                color: "#111827",
+                            },
+                            ticks: {
+                                backdropColor: "transparent",
+                                showLabelBackdrop: false,
+                                stepSize: 0.2,
+                                callback: (v) => `${v.toFixed(1)}x`,
+                            },
+                        },
+                    },
+                },
+            };
+        }
+
+
+
+        function summarizeForSnapshot(data) {
+            if (!data || !data.clusters || !data.clusters.length) return null;
+            const clusters = data.clusters;
+            const k = data.k || clusters.length;
+            const overallMean = data.overall_mean_performance ?? null;
+
+            let best = clusters[0];
+            let worst = clusters[0];
+            let smallest = clusters[0];
+
+            for (const c of clusters) {
+                if (c.mean_performance > best.mean_performance) best = c;
+                if (c.mean_performance < worst.mean_performance) worst = c;
+                if (c.proportion < smallest.proportion) smallest = c;
+            }
+
+            return {
+                k,
+                overallMean,
+                best: {
+                    name: clusterDisplayName(best),
+                    perf: best.mean_performance,
+                    size: best.proportion,
+                },
+                worst: {
+                    name: clusterDisplayName(worst),
+                    perf: worst.mean_performance,
+                    size: worst.proportion,
+                },
+                smallest: {
+                    name: clusterDisplayName(smallest),
+                    perf: smallest.mean_performance,
+                    size: smallest.proportion,
+                },
+            };
+        }
+
+
+        // === 快照比較：人話說明用的小工具 ===
+
+        // 說明 k 值有沒有變，算是微調還是完全不同的切法
+        function describeKChange(oldMeta, newMeta) {
+            const oldK = oldMeta.k;
+            const newK = newMeta.k;
+            if (!Number.isFinite(oldK) || !Number.isFinite(newK)) return "";
+
+            const delta = Math.abs(newK - oldK);
+            if (delta === 0) {
+                return `這兩版都採用 ${oldK} 群，主要是在同一個切法上微調。`;
+            }
+
+            const directionWord = newK > oldK ? "提高" : "降低";
+            const actionWord = newK > oldK ? "切得更細" : "合併得更粗";
+
+            if (delta === 1) {
+                return `目前版本把分群數從 ${oldK} 群小幅${directionWord}到 ${newK} 群，相當於把原本的群稍微${actionWord}。`;
+            }
+            if (delta <= 3) {
+                return `目前版本把分群數從 ${oldK} 群${directionWord}到 ${newK} 群，分群方式有明顯調整，可以看作是原始版本的進一步${actionWord}。`;
+            }
+            return `目前版本把分群數從 ${oldK} 群一次${directionWord}到 ${newK} 群，已經是完全不同的切法，建議把它當成另一個版本來看。`;
+        }
+
+        // 說明分數差多少（高績效群、低績效群共用）
+        function describeScoreChange(newVal, oldVal) {
+            if (newVal == null || oldVal == null) return "";
+            const diff = newVal - oldVal;
+            const abs = Math.abs(diff);
+
+            if (abs < 0.05) {
+                return "分數幾乎一樣，可以視為同一層級。";
+            }
+
+            const trend = diff > 0 ? "目前版本略高一些" : "目前版本略低一些";
+            if (abs < 0.15) {
+                return `${trend}（約差 ${abs.toFixed(2)} 分）。`;
+            }
+            return `${trend}，差距比較明顯（約差 ${abs.toFixed(2)} 分）。`;
+        }
+
+        // 說明「最小族群」的人數比例有沒有差很多
+        function describeSizeChange(newSize, oldSize) {
+            if (newSize == null || oldSize == null) return "";
+            const diffPct = (newSize - oldSize) * 100;
+            const abs = Math.abs(diffPct);
+
+            if (abs < 3) {
+                return "最小群的人數比例差不多，可視為類似規模。";
+            }
+
+            const bigger = diffPct > 0;
+            const baseText = bigger
+                ? "目前版本的最小群佔比稍微更大"
+                : "目前版本的最小群佔比更小";
+
+            if (abs < 8) {
+                return `${baseText}（約差 ${abs.toFixed(1)} 個百分點）。`;
+            }
+            return `${baseText}，差異比較明顯（約差 ${abs.toFixed(1)} 個百分點）。`;
+        }
+
+        // 把分群品質等級轉成一句好讀的標籤
+        function qualityLevelLabel(level) {
+            if (level === "good") return "🟢 穩定";
+            if (level === "ok") return "🟡 待觀察";
+            if (level === "bad") return "🔴 建議調整";
+            return "尚未分析";
+        }
+
+
+
+
+        function saveSnapshot() {
+            if (!lastClusterData || !lastClusterData.clusters || !lastClusterData.clusters.length) {
+                alert("目前沒有可以儲存的分群結果。");
+                return;
+            }
+            snapshotData = deepClone(lastClusterData);
+            snapshotMeta = summarizeForSnapshot(snapshotData);
+
+            const labelEl = document.getElementById("snapshot-label");
+            if (snapshotMeta && labelEl) {
+                labelEl.textContent =
+                    `已儲存快照：k = ${snapshotMeta.k}，整體平均約 ` +
+                    `${formatNumber(snapshotMeta.overallMean, 2)} 分`;
+            }
+
+            const compareBtn = document.getElementById("btn-compare-snapshot");
+            if (compareBtn) compareBtn.disabled = false;
+
+            const compareCard = document.getElementById("snapshot-compare-card");
+            if (compareCard) compareCard.style.display = "none";
+        }
+
+        function compareSnapshot() {
+            const cardEl = document.getElementById("snapshot-compare-card");
+            const bodyEl = document.getElementById("snapshot-compare-body");
+            if (!cardEl || !bodyEl) return;
+
+            // 沒有快照或目前還沒分群時，先給明確提示
+            if (!snapshotData || !lastClusterData) {
+                alert("請先儲存一個快照，再進行比較。");
+                cardEl.style.display = "none";
+                return;
+            }
+
+            const a = summarizeForSnapshot(snapshotData);      // 快照版
+            const b = summarizeForSnapshot(lastClusterData);   // 目前版
+
+            // 資料怪怪的時候，不要靜默失敗，直接顯示說明
+            if (!a || !b) {
+                bodyEl.innerHTML = `
+            <p>目前的分群資料不足以比較，請重新執行分群並再存一次快照。</p>
+        `;
+                cardEl.style.display = "block";
+                return;
+            }
+
+            // 1）k 值有沒有變、算微調還是完全不同
+            const kSentence = describeKChange(a, b);
+
+            // 2）整體平均績效的差異（通常會很小，直接幫你翻譯）
+            let overallSentence = "";
+            if (a.overallMean != null && b.overallMean != null) {
+                const diff = b.overallMean - a.overallMean;
+                const abs = Math.abs(diff);
+                const oldText = formatNumber(a.overallMean, 2);
+                const newText = formatNumber(b.overallMean, 2);
+
+                if (abs < 0.02) {
+                    overallSentence = `兩版的整體平均績效幾乎一樣（快照約 ${oldText} 分，目前約 ${newText} 分），代表只是換了一種看資料的角度，整體表現沒有變。`;
+                } else {
+                    const trend = diff > 0 ? "略高" : "略低";
+                    const strength = abs < 0.1 ? "些微" : "比較明顯";
+                    overallSentence = `目前版本的整體平均績效${trend}於快照版${strength}（從約 ${oldText} 分到 ${newText} 分，差約 ${abs.toFixed(2)} 分）。`;
+                }
+            }
+
+            // 3）高績效群、低績效群、最小族群人數的差異，用人話解釋
+            const bestDetail = describeScoreChange(b.best.perf, a.best.perf);
+            const worstDetail = describeScoreChange(b.worst.perf, a.worst.perf);
+            const sizeDetail = describeSizeChange(b.smallest.size, a.smallest.size);
+
+            // 4）加上「品質簡評」：這版比較適合當正式版本，還是當參考
+            let qualitySentence = "";
+            const qa = evaluateClusterQuality(snapshotData);
+            const qb = evaluateClusterQuality(lastClusterData);
+            if (qa && qb) {
+                const order = { bad: 1, ok: 2, good: 3 };
+                const diffLevel = (order[qb.level] || 0) - (order[qa.level] || 0);
+
+                if (diffLevel > 0) {
+                    qualitySentence =
+                        `品質簡評：快照版約為「${qualityLevelLabel(qa.level)}」，` +
+                        `目前版約為「${qualityLevelLabel(qb.level)}」，` +
+                        `目前版在人數分布與績效差異上相對更清楚（${qb.reasonText}），` +
+                        `如果要拿來做簡報或正式討論，可以優先考慮目前這一版。`;
+                } else if (diffLevel < 0) {
+                    qualitySentence =
+                        `品質簡評：快照版約為「${qualityLevelLabel(qa.level)}」，` +
+                        `目前版約為「${qualityLevelLabel(qb.level)}」，` +
+                        `快照版在穩定度上略勝一籌，若希望版本比較保守，可以以快照版為主（${qa.reasonText}）。`;
+                } else {
+                    qualitySentence =
+                        `品質簡評：兩版分群品質差不多（皆為「${qualityLevelLabel(qb.level)}」），` +
+                        `可以依你想強調的主題來選用：例如一版看起來群數較簡潔、另一版則把族群切得更細。`;
+                }
+            }
+
+            // 5）組裝成好讀的 HTML
+            const htmlParts = [];
+
+            htmlParts.push(`<p>${kSentence}</p>`);
+            if (overallSentence) {
+                htmlParts.push(`<p>${overallSentence}</p>`);
+            }
+
+            htmlParts.push(`
+        <ul>
+            <li>
+                <strong>高績效族群：</strong>
+                快照版為「${a.best.name}」平均約 ${formatNumber(a.best.perf, 2)} 分，
+                目前版為「${b.best.name}」平均約 ${formatNumber(b.best.perf, 2)} 分。
+                ${bestDetail}
+            </li>
+            <li>
+                <strong>需關注族群（最低績效）：</strong>
+                快照版為「${a.worst.name}」平均約 ${formatNumber(a.worst.perf, 2)} 分，
+                目前版為「${b.worst.name}」平均約 ${formatNumber(b.worst.perf, 2)} 分。
+                ${worstDetail}
+            </li>
+            <li>
+                <strong>最小族群人數：</strong>
+                快照版約 ${(a.smallest.size * 100).toFixed(1)}%，
+                目前版約 ${(b.smallest.size * 100).toFixed(1)}%。${sizeDetail}
+            </li>
+        </ul>
+    `);
+
+            if (qualitySentence) {
+                htmlParts.push(`<p class="note">${qualitySentence}</p>`);
+            }
+
+            bodyEl.innerHTML = htmlParts.join("");
+            cardEl.style.display = "block";
+        }
+
+
+
+
+
+        // --- 檢查模型狀態 ---
+        async function checkModelStatus() {
+            const statusEl = document.getElementById("model-status");
+
+            // ⭐ 一開始就明說「正在檢查」
+            statusEl.className = "status-pill warn";
+            statusEl.textContent = "⏳ 正在檢查模型狀態…";
+
+
+            try {
+                const res = await fetch(`${API_BASE}/api/model_summary`);
+                if (!res.ok) {
+                    statusEl.className = "status-pill warn";
+                    statusEl.textContent = "⚠ 系統尚未偵測到已訓練模型，請先到 Demo 頁按「建立模型」。";
+                    return;
+                }
+                const data = await res.json();
+                if (data.has_model) {
+                    statusEl.className = "status-pill ok";
+                    statusEl.textContent = "✅ 已偵測到已訓練模型，可直接在下方調整 k 值分群。";
+                } else {
+                    statusEl.className = "status-pill warn";
+                    statusEl.textContent = "⚠ 尚未偵測到已訓練模型，請先到 Demo 頁按「建立模型」。";
+                }
+            } catch (err) {
+                console.error(err);
+                statusEl.className = "status-pill warn";
+                statusEl.textContent = "⚠ 檢查模型狀態失敗，請確認後端是否啟動。";
+            }
+        }
+
+        // --- k 值按鈕互動 ---
+        const kInput = document.getElementById("k-input");
+        const kPills = document.querySelectorAll(".k-pill");
+
+        kPills.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const k = Number(btn.dataset.k);
+                kInput.value = k;
+                kPills.forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+            });
+        });
+
+        kInput.addEventListener("input", () => {
+            const val = Number(kInput.value);
+            kPills.forEach(b => {
+                if (Number(b.dataset.k) === val) {
+                    b.classList.add("active");
+                } else {
+                    b.classList.remove("active");
+                }
+            });
+        });
+
+        // --- 呼叫後端分群 API ---
+        async function runCluster() {
+            const btn = document.getElementById("btn-run-cluster");
+            const statusText = document.getElementById("cluster-status");
+            const k = Number(kInput.value || "3");
+
+            if (!Number.isFinite(k) || k < 2) {
+                alert("請輸入合理的分群數（至少 2 群）。");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "分群中…";
+            statusText.textContent = "分群中，請稍候…";
+
+            try {
+                const res = await fetch(`${API_BASE}/api/cluster_sandbox`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ k }),
+                });
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(`HTTP ${res.status}: ${text}`);
+                }
+                const data = await res.json();
+                renderClusterResult(data);
+            } catch (err) {
+                console.error(err);
+                alert(`分群失敗：${err.message}`);
+                statusText.textContent = "分群失敗，請檢查後端是否啟動。";
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "🔄 重新分群";
+            }
+        }
+
+
+        // --- 核心：渲染結果並繪製圖表 ---
+        function renderClusterResult(data) {
+            lastClusterData = data;
+
+            // 分群品質小燈號
+            updateClusterQualityPill(data);
+
+            // 先把舊圖刪掉
+            activeCharts.forEach((chart) => chart.destroy());
+            activeCharts = [];
+            if (overallPerfChart) {
+                overallPerfChart.destroy();
+                overallPerfChart = null;
+            }
+            if (multiRadarChart) {
+                multiRadarChart.destroy();
+                multiRadarChart = null;
+            }
+
+            const summaryEl = document.getElementById("cluster-summary");
+            const listWrapper = document.getElementById("cluster-list-wrapper");
+            const statusText = document.getElementById("cluster-status");
+
+            const k = data.k;
+            const n = data.n_samples;
+            const overallMean = data.overall_mean_performance;
+            const clusters = data.clusters || [];
+            const globalMeans = data.feature_means_global || {};
+
+            // Step 2 上方文字摘要
+            summaryEl.innerHTML = `
+        <h3>已完成 ${k} 群分群</h3>
+        <p>共 ${n} 筆員工資料，整體平均績效約為 ${formatNumber(
+                overallMean,
+                3
+            )} 分。下方依照「各群平均績效」由高到低排列。</p>
+    `;
+            statusText.textContent = `已完成 ${k} 群分群，可多次調整 k 值與觀察主題，看看輪廓怎麼變。`;
+
+            const container = document.createElement("div");
+            container.className = "cluster-list";
+
+            // === 整體 baseline 小卡 ===
+            const baselineBox = document.createElement("div");
+            baselineBox.className = "cluster-baseline-box";
+            baselineBox.innerHTML =
+                '<div class="cluster-baseline-title">整體平均概況（比較基準）</div>';
+
+            const baselineList = document.createElement("ul");
+            baselineList.className = "cluster-baseline-list";
+
+            const focusKeys = getThemeKeys(globalMeans);
+            if (!focusKeys.length) {
+                baselineList.innerHTML = "<li>目前沒有可用的數值特徵可以比較。</li>";
+            } else {
+                focusKeys.forEach((key) => {
+                    const li = document.createElement("li");
+                    const label = FEATURE_LABELS[key] || key;
+                    li.textContent = `${label}：全體平均約 ${formatNumber(
+                        globalMeans[key]
+                    )}`;
+                    baselineList.appendChild(li);
+                });
+            }
+            baselineBox.appendChild(baselineList);
+            container.appendChild(baselineBox);
+
+            // === 各群卡片（只留文字＋「與平均差異%」橫條圖） ===
+            clusters.forEach((c) => {
+                const card = document.createElement("div");
+                card.className = "cluster-card";
+
+                const header = document.createElement("div");
+                header.className = "cluster-header";
+
+                const titleText = c.research_name
+                    ? `${c.research_name}（${c.display_name || `第 ${c.cluster_id + 1} 群`
+                    }）`
+                    : c.display_name || `第 ${c.cluster_id + 1} 群`;
+
+                header.innerHTML = `
+            <div class="cluster-name">${titleText}</div>
+            <div class="cluster-tag">${c.rank_label || "平均績效輪廓"}</div>
+        `;
+                card.appendChild(header);
+
+                const body = document.createElement("div");
+                body.className = "cluster-body";
+                body.innerHTML = `
+            <p>人數：約 ${c.n_samples} 人（約佔 ${(c.proportion * 100).toFixed(
+                    1
+                )}%）</p>
+            <p>平均績效：約 ${formatNumber(c.mean_performance, 3)} 分</p>
+            <p>相對位置：約落在全體的第 ${(c.mean_percentile * 100).toFixed(
+                    1
+                )} 百分位</p>
+        `;
+
+                // 人數比例小條
+                const sizeBarWrap = document.createElement("div");
+                sizeBarWrap.style.margin = "4px 0 6px";
+                sizeBarWrap.style.fontSize = "0.85rem";
+
+                const barOuter = document.createElement("div");
+                barOuter.style.height = "6px";
+                barOuter.style.borderRadius = "999px";
+                barOuter.style.background = "#e5e7eb";
+                barOuter.style.overflow = "hidden";
+
+                const barInner = document.createElement("div");
+                barInner.style.height = "100%";
+                barInner.style.width = `${(c.proportion * 100).toFixed(1)}%`;
+                barInner.style.borderRadius = "999px";
+                barInner.style.background = "#0f766e";
+
+                barOuter.appendChild(barInner);
+                sizeBarWrap.textContent = "此群佔整體人數比例：";
+                sizeBarWrap.appendChild(barOuter);
+                body.appendChild(sizeBarWrap);
+
+                if (c.comment) {
+                    const p4 = document.createElement("p");
+                    p4.textContent = c.comment;
+                    body.appendChild(p4);
+                }
+
+                // 每群小績效條
+                const perfWrap = document.createElement("div");
+                perfWrap.className = "cluster-perf-bar-wrap";
+
+                const barBg = document.createElement("div");
+                barBg.className = "cluster-perf-bar-bg";
+
+                const barFill = document.createElement("div");
+                barFill.className = "cluster-perf-bar-fill";
+
+                const ratio = overallMean ? c.mean_performance / overallMean : 0;
+                const ratioClamped = Math.max(0.4, Math.min(ratio, 1.6));
+                const widthPercent = (ratioClamped / 1.6) * 100;
+
+                barFill.style.width = `${widthPercent}%`;
+                barFill.style.background =
+                    ratio >= 1
+                        ? "linear-gradient(to right, #22c55e, #16a34a)"
+                        : "linear-gradient(to right, #f97316, #ea580c)";
+
+                barBg.appendChild(barFill);
+
+                const barLabel = document.createElement("div");
+                barLabel.className = "cluster-perf-bar-label";
+                barLabel.textContent = `相對整體平均：約 ${(ratio * 100).toFixed(0)}%`;
+
+                perfWrap.appendChild(barBg);
+                perfWrap.appendChild(barLabel);
+                body.appendChild(perfWrap);
+
+                // 特徵輪廓（與平均差異 % 的橫條圖）
+                const featureBlock = document.createElement("div");
+                featureBlock.className = "cluster-feature-block";
+
+                const fTitle = document.createElement("div");
+                fTitle.className = "cluster-feature-title";
+                fTitle.textContent = "特徵輪廓分析（與整體差異 %）";
+                featureBlock.appendChild(fTitle);
+
+                const diffs = c.top_feature_diff || [];
+                const themeKeys = getThemeKeys(globalMeans);
+                let displayItems = [];
+
+                if (themeKeys.length) {
+                    displayItems = diffs.filter((d) => themeKeys.includes(d.feature));
+                } else {
+                    displayItems = diffs.slice(0, 10);
+                }
+
+                if (displayItems.length > 0) {
+                    const chartContainer = document.createElement("div");
+                    chartContainer.style.marginTop = "10px";
+                    chartContainer.style.height = `${displayItems.length * 35 + 50}px`;
+                    chartContainer.style.position = "relative";
+
+                    const canvas = document.createElement("canvas");
+                    chartContainer.appendChild(canvas);
+                    featureBlock.appendChild(chartContainer);
+
+                    const labels = displayItems.map(
+                        (d) => FEATURE_LABELS[d.feature] || d.feature
+                    );
+                    const percentages = displayItems.map((d) => {
+                        if (!d.global_mean) return 0;
+                        return (
+                            ((d.cluster_mean - d.global_mean) / d.global_mean) * 100
+                        );
+                    });
+                    const rawValues = displayItems.map((d) => ({
+                        c: d.cluster_mean,
+                        g: d.global_mean,
+                    }));
+
+                    const ctx = canvas.getContext("2d");
+                    const newChart = new Chart(ctx, {
+                        type: "bar",
+                        data: {
+                            labels,
+                            datasets: [
+                                {
+                                    label: "與平均差異 (%)",
+                                    data: percentages,
+                                    backgroundColor: percentages.map((v) =>
+                                        v >= 0
+                                            ? "rgba(34, 197, 94, 0.7)"
+                                            : "rgba(239, 68, 68, 0.7)"
+                                    ),
+                                    borderColor: percentages.map((v) =>
+                                        v >= 0
+                                            ? "rgba(34, 197, 94, 1)"
+                                            : "rgba(239, 68, 68, 1)"
+                                    ),
+                                    borderWidth: 1,
+                                    borderRadius: 4,
+                                    barPercentage: 0.7,
+                                },
+                            ],
+                        },
+                        options: {
+                            indexAxis: "y",
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label(context) {
+                                            const idx = context.dataIndex;
+                                            const raw = rawValues[idx];
+                                            const val = context.raw.toFixed(1);
+                                            return `${val}% (本群: ${formatNumber(
+                                                raw.c
+                                            )} / 全體: ${formatNumber(raw.g)})`;
+                                        },
+                                    },
+                                },
+                            },
+                            scales: {
+                                x: {
+                                    grid: { color: "#e5e7eb" },
+                                    ticks: { callback: (v) => v + "%" },
+                                    suggestedMin: -10,
+                                    suggestedMax: 10,
+                                },
+                                y: {
+                                    grid: { display: false },
+                                },
+                            },
+                        },
+                    });
+                    activeCharts.push(newChart);
+                } else {
+                    const noDataMsg = document.createElement("p");
+                    noDataMsg.style.color = "#9ca3af";
+                    noDataMsg.style.fontSize = "0.9rem";
+                    noDataMsg.style.fontStyle = "italic";
+                    noDataMsg.textContent =
+                        "在此群組中，所選主題的指標與平均值差異不明顯。";
+                    featureBlock.appendChild(noDataMsg);
+                }
+
+                body.appendChild(featureBlock);
+                card.appendChild(body);
+                container.appendChild(card);
+            });
+
+            listWrapper.innerHTML = "";
+            listWrapper.appendChild(container);
+
+            // 每次有新結果，就可以儲存快照
+            const snapBtn = document.getElementById("btn-save-snapshot");
+            if (snapBtn) snapBtn.disabled = false;
+            const compareBtn = document.getElementById("btn-compare-snapshot");
+            if (compareBtn && !snapshotData) compareBtn.disabled = true;
+
+            // ================================
+            // 左下 1-4：各群指標雷達圖（全部數值特徵）
+            // ================================
+            const radarCard = document.getElementById("radar-chart-card");
+            const radarCanvas = document.getElementById("multi-radar-canvas");
+            const radarNote = document.getElementById("radar-highlight-note");
+
+            if (radarCard && radarCanvas) {
+                const featureKeysAll = Object.keys(globalMeans || {});
+                if (!featureKeysAll.length || !clusters.length) {
+                    radarCard.style.display = "none";
+                    if (radarNote) radarNote.textContent = "";
+                } else {
+                    radarCard.style.display = "block";
+
+                    const rctx = radarCanvas.getContext("2d");
+                    if (multiRadarChart) {
+                        multiRadarChart.destroy();
+                        multiRadarChart = null;
+                    }
+
+                    const cfg = buildMultiRadarConfig(clusters, globalMeans);
+                    multiRadarChart = new Chart(rctx, cfg);
+
+                    // 找出差異最大的幾個指標，寫在說明文字
+                    const diffSummary = featureKeysAll
+                        .map((key) => {
+                            let maxDev = 0;
+                            const g = globalMeans[key];
+                            if (g == null || g === 0) return { key, maxDev: 0 };
+
+                            clusters.forEach((c) => {
+                                const fm = c.feature_means || {};
+                                const v = fm[key];
+                                if (v == null) return;
+                                const ratio = v / g;
+                                const dev = Math.abs(ratio - 1);
+                                if (dev > maxDev) maxDev = dev;
+                            });
+                            return { key, maxDev };
+                        })
+                        .filter((d) => d.maxDev > 0.12); // 至少差 12% 才視為明顯差異
+
+                    diffSummary.sort((a, b) => b.maxDev - a.maxDev);
+                    const topDiff = diffSummary.slice(0, 6);
+                    const highlightNames = topDiff.map(
+                        (d) => FEATURE_LABELS[d.key] || d.key
+                    );
+
+                    if (radarNote) {
+                        if (highlightNames.length) {
+                            radarNote.textContent =
+                                "大約在這幾個指標上，各群差異最大：「" +
+                                highlightNames.join("、") +
+                                "」。圖中離 1x 圈越遠的地方，差異越明顯。";
+                        } else {
+                            radarNote.textContent =
+                                "圖上越凸出或低於 1x 的指標，就是各群差異較大的地方。";
+                        }
+                    }
+                }
+            }
+
+            // ================================
+            // 左下 1-4：所有群平均績效總覽圖（橫條圖）
+            // ================================
+            const chartCanvas = document.getElementById("overall-chart-canvas");
+            if (chartCanvas) {
+                const ctx = chartCanvas.getContext("2d");
+
+                if (overallPerfChart) {
+                    overallPerfChart.destroy();
+                    overallPerfChart = null;
+                }
+
+                const clustersSorted = clusters
+                    .slice()
+                    .sort(
+                        (a, b) =>
+                            (b.mean_performance || 0) - (a.mean_performance || 0)
+                    );
+
+                const labels = clustersSorted.map(
+                    (c) => c.display_name || `第 ${c.cluster_id + 1} 群`
+                );
+                const scores = clustersSorted.map((c) => c.mean_performance);
+
+                overallPerfChart = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels,
+                        datasets: [
+                            {
+                                label: "平均績效",
+                                data: scores,
+                                backgroundColor: scores.map((s) =>
+                                    s >= overallMean
+                                        ? "rgba(34, 197, 94, 0.75)"
+                                        : "rgba(56, 189, 248, 0.75)"
+                                ),
+                                borderColor: scores.map((s) =>
+                                    s >= overallMean
+                                        ? "rgba(22, 163, 74, 1)"
+                                        : "rgba(37, 99, 235, 1)"
+                                ),
+                                borderWidth: 1,
+                                borderRadius: 4,
+                                barPercentage: 0.7,
+                            },
+                        ],
+                    },
+                    options: {
+                        indexAxis: "y",
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (ctx) =>
+                                        `平均績效：${formatNumber(ctx.raw, 3)} 分`,
+                                },
+                            },
+                        },
+                        scales: {
+                            x: {
+                                grid: { color: "#e5e7eb" },
+                                suggestedMin: 1,
+                                suggestedMax: 5,
+                            },
+                            y: {
+                                grid: { display: false },
+                            },
+                        },
+                    },
+                    plugins: [
+                        {
+                            id: "overallMeanLine",
+                            afterDraw(chart) {
+                                if (!overallMean) return;
+                                const { ctx, chartArea, scales } = chart;
+                                const xScale = scales.x;
+                                if (!xScale) return;
+
+                                const xPos = xScale.getPixelForValue(overallMean);
+
+                                ctx.save();
+                                ctx.beginPath();
+                                ctx.setLineDash([6, 6]);
+                                ctx.moveTo(xPos, chartArea.top + 4);
+                                ctx.lineTo(xPos, chartArea.bottom - 4);
+                                ctx.strokeStyle = "rgba(107, 114, 128, 0.95)";
+                                ctx.lineWidth = 1.5;
+                                ctx.stroke();
+                                ctx.setLineDash([]);
+                                ctx.restore();
+                            },
+                        },
+                    ],
+                });
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+        // 初始化監聽事件
+        document.getElementById("btn-run-cluster").addEventListener("click", runCluster);
+        checkModelStatus();
+
+        // 觀察主題改變時，如果已有資料則重繪
+        const themeSelectEl = document.getElementById("theme-select");
+        if (themeSelectEl) {
+            themeSelectEl.addEventListener("change", () => {
+                if (lastClusterData) {
+                    renderClusterResult(lastClusterData);
+                }
+            });
+        }
+
+        const saveSnapBtn = document.getElementById("btn-save-snapshot");
+        if (saveSnapBtn) {
+            saveSnapBtn.addEventListener("click", saveSnapshot);
+        }
+
+        const compareSnapBtn = document.getElementById("btn-compare-snapshot");
+        if (compareSnapBtn) {
+            compareSnapBtn.addEventListener("click", compareSnapshot);
+        }
+
+        // =====================
+        // 雷達圖放大檢視 Modal
+        // =====================
+        const radarModalEl = document.getElementById("radar-modal");
+        const btnOpenRadar = document.getElementById("btn-open-radar");
+        const btnCloseRadar = document.getElementById("btn-close-radar");
+        const largeRadarCanvas = document.getElementById("multi-radar-canvas-large");
+
+        function closeRadarModal() {
+            if (radarModalEl) {
+                radarModalEl.style.display = "none";
+            }
+            if (multiRadarChartLarge) {
+                multiRadarChartLarge.destroy();
+                multiRadarChartLarge = null;
+            }
+        }
+
+        if (btnOpenRadar && radarModalEl && largeRadarCanvas) {
+            btnOpenRadar.addEventListener("click", () => {
+                if (
+                    !lastClusterData ||
+                    !lastClusterData.clusters ||
+                    !lastClusterData.clusters.length
+                ) {
+                    alert("請先完成一次分群，再看雷達圖。");
+                    return;
+                }
+
+                radarModalEl.style.display = "flex";
+
+                const clusters = lastClusterData.clusters || [];
+                const globalMeans = lastClusterData.feature_means_global || {};
+
+                const ctx = largeRadarCanvas.getContext("2d");
+                if (multiRadarChartLarge) {
+                    multiRadarChartLarge.destroy();
+                    multiRadarChartLarge = null;
+                }
+                const cfg = buildMultiRadarConfig(clusters, globalMeans);
+                multiRadarChartLarge = new Chart(ctx, cfg);
+            });
+        }
+
+        if (btnCloseRadar) {
+            btnCloseRadar.addEventListener("click", closeRadarModal);
+        }
+
+        // 點模糊背景或按 Esc 也可以關
+        if (radarModalEl) {
+            radarModalEl.addEventListener("click", (e) => {
+                if (e.target === radarModalEl) {
+                    closeRadarModal();
+                }
+            });
+
+            window.addEventListener("keydown", (e) => {
+                if (e.key === "Escape" && radarModalEl.style.display === "flex") {
+                    closeRadarModal();
+                }
+            });
+        }
+
+
+
+    </script>
+</body>
+
+</html>

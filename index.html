@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>AI 人才發展研究｜模型說明</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --bg: #f3fbf7;
+            --card: #f5f7fb;
+            --card-strong: #e4ecf8;
+            --border: #7c8ba5;
+            --accent: #f97316;
+            --accent-soft: #ffedd5;
+            --text: #0f172a;
+            --muted: #4b5563;
+            --radius-xl: 22px;
+            --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.18);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans TC",
+                "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, #e0f2fe 0, #f3fbf7 40%, #ecfdf3 100%);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 18px;
+        }
+
+        .shell {
+            max-width: 1040px;
+            margin: 32px auto 48px;
+            padding: 0 18px;
+        }
+
+        header {
+            background: rgba(15, 23, 42, 0.96);
+            color: #e5e7eb;
+            padding: 22px 22px 20px;
+            border-radius: 28px;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 18px;
+        }
+
+        header-main {
+            flex: 1 1 260px;
+        }
+
+        header h1 {
+            margin: 0 0 10px;
+            font-size: 1.9rem;
+            letter-spacing: 0.03em;
+        }
+
+        header p {
+            margin: 0;
+            font-size: 1.05rem;
+            color: #cbd5f5;
+        }
+
+        .header-nav {
+            min-width: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+            font-size: 0.95rem;
+        }
+
+        .header-nav a {
+            color: #e5e7eb;
+            text-decoration: none;
+            opacity: 0.9;
+        }
+
+        main {
+            margin-top: 22px;
+            display: grid;
+            grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+            gap: 18px;
+        }
+
+        @media (max-width: 900px) {
+            main {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            .header-nav {
+                align-items: flex-start;
+            }
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(148, 163, 184, 0.85);
+            padding: 16px 18px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        h2 {
+            margin: 0 0 8px;
+            font-size: 1.35rem;
+        }
+
+        h3 {
+            margin: 14px 0 6px;
+            font-size: 1.1rem;
+        }
+
+        ul {
+            margin: 6px 0 0 20px;
+            padding-left: 0;
+        }
+
+        li+li {
+            margin-top: 4px;
+        }
+
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .pill {
+            font-size: 0.9rem;
+            border-radius: 999px;
+            padding: 3px 10px;
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            background: #ffffff;
+            color: var(--muted);
+        }
+
+        .cta-card {
+            background: var(--card-strong);
+            border-radius: 24px;
+            padding: 14px 16px 16px;
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cta-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .cta-note {
+            font-size: 0.95rem;
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border-radius: 999px;
+            padding: 9px 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(to right, #0f766e, #22c55e);
+            color: #fff;
+            box-shadow: 0 10px 20px rgba(34, 197, 94, 0.45);
+            text-decoration: none;
+            width: 100%;
+            text-align: center;
+        }
+
+        .cta-btn.secondary {
+            background: linear-gradient(to right, #1d4ed8, #6366f1);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
+        }
+
+        .cta-btn span.icon {
+            font-size: 1.2rem;
+        }
+
+        .note {
+            font-size: 0.95rem;
+            color: var(--muted);
+        }
+
+        .cta-btn-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        @media (min-width: 720px) {
+            .cta-btn-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="shell">
+        <header>
+            <header-main>
+                <h1>可解釋與公平性檢核之 AI 人才發展模型</h1>
+                <p>第七組｜Kaggle 員工績效資料 → AI 人才羅盤｜結合分群、預測、SHAP 與公平性審計。</p>
+            </header-main>
+            <div class="header-nav">
+                <span>📌 建議流程：先到右側 Demo → 再到自由分群遊樂場</span>
+            </div>
+        </header>
+
+        <main>
+            <section class="card">
+                <h2>這個模型在做什麼？</h2>
+                <p>
+                    這個專案把一份「員工績效與生產力資料」變成一個能支援人才發展決策的 AI 模型，
+                    從 <strong>分群洞察</strong>、<strong>績效預測</strong> 到 <strong>公平性檢核</strong> 一條龍走完。
+                </p>
+
+                <h3>核心步驟</h3>
+                <ul>
+                    <li><strong>Step 1：EDA + 分群</strong> – 用多次 k-means 檢查穩定度，找出關鍵人才輪廓。</li>
+                    <li><strong>Step 2：監督式模型 + SHAP</strong> – 用 RandomForest / ElasticNet 預測績效，並用 SHAP 看「為什麼」。</li>
+                    <li><strong>Step 3：公平性審計</strong> – 檢查不同性別、年齡帶、教育程度的誤差差異，避免模型偏誤。</li>
+                    <li><strong>Demo ＋ 羅盤頁</strong> – 一頁做實驗（上傳資料、看 SHAP）、一頁做產品化展示（固定模型的人才羅盤）。</li>
+                </ul>
+
+                <h3>資料與技術</h3>
+                <div class="pill-row">
+                    <div class="pill">📊 Kaggle Extended Employee Performance Data</div>
+                    <div class="pill">🤖 RandomForestRegressor + ElasticNetCV</div>
+                    <div class="pill">🧠 SHAP 全域＋個案解釋</div>
+                    <div class="pill">⚖️ 模型誤差公平性檢核</div>
+                    <div class="pill">🛠 FastAPI 後端｜純 HTML 前端</div>
+                </div>
+            </section>
+
+            <aside class="card">
+                <div class="cta-card">
+                    <div>
+                        <div class="cta-title">想親手「玩」模型？</div>
+                        <p class="cta-note">
+                            可以先到實驗用 Demo 頁，上傳研究資料、調整 SHAP 排名，並嘗試不同員工條件，觀察模型表現。
+                        </p>
+                    </div>
+                    <div class="cta-btn-row">
+                        <a href="predict.html" class="cta-btn">
+                            <span class="icon">🚀</span>
+                            <span>開啟實驗用預測 Demo</span>
+                        </a>
+                        <a href="sandbox.html" class="cta-btn secondary">
+                            <span class="icon">🎮</span>
+                            <span>前往自由分群遊樂場</span>
+                        </a>
+                    </div>
+                    <p class="note">
+                        建議流程：先在 Demo 頁按「建立模型」，之後再到自由分群遊樂場調整 k（群數），比較不同分群輪廓。
+                    </p>
+                </div>
+            </aside>
+        </main>
+    </div>
+</body>
+
+</html>

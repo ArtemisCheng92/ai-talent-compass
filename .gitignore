@@ -1,0 +1,15 @@
+# 虛擬環境（不要上傳）
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Jupyter / 其他暫存
+.ipynb_checkpoints/
+
+# VS Code 設定
+.vscode/
+
+# 環境變數檔（如果之後有）
+.env

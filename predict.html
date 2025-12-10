@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>AI 人才發展模型｜研究版 Demo ＋ Talent Compass</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        :root {
+            --bg: #f3fbf7;
+            --panel: #dde7f5;
+            --card: #f5f7fb;
+            --card-strong: #e4ecf8;
+            --border: #7c8ba5;
+            --accent: #f97316;
+            --accent-soft: #ffedd5;
+            --accent-strong: #ea580c;
+            --text: #0f172a;
+            --muted: #4b5563;
+            --radius-xl: 22px;
+            --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.18);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Noto Sans TC",
+                "Segoe UI", sans-serif;
+            background: radial-gradient(circle at top, #e0f2fe 0, #f3fbf7 40%, #ecfdf3 100%);
+            color: var(--text);
+            line-height: 1.7;
+            font-size: 18px;
+        }
+
+        .shell {
+            max-width: 1180px;
+            margin: 28px auto 40px;
+            padding: 0 16px;
+        }
+
+        header {
+            background: rgba(15, 23, 42, 0.95);
+            color: #e5e7eb;
+            padding: 18px 20px;
+            border-radius: 26px;
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 16px;
+        }
+
+        header .title-block {
+            flex: 1 1 260px;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+            font-size: 1.8rem;
+            letter-spacing: 0.03em;
+        }
+
+        header p {
+            margin: 0;
+            font-size: 1.03rem;
+            color: #cbd5f5;
+        }
+
+        header .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 210px;
+            align-items: flex-end;
+        }
+
+        header .nav a {
+            color: #e5e7eb;
+            text-decoration: none;
+            font-size: 0.96rem;
+            opacity: 0.9;
+        }
+
+        header .nav a span {
+            font-size: 1.1rem;
+            margin-right: 4px;
+        }
+
+        main {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+            gap: 18px;
+        }
+
+        @media (max-width: 960px) {
+            main {
+                grid-template-columns: minmax(0, 1fr);
+            }
+
+            header .nav {
+                align-items: flex-start;
+            }
+        }
+
+        .panel {
+            background: var(--panel);
+            border-radius: var(--radius-xl);
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            padding: 16px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .panel h2 {
+            margin: 0 0 8px;
+            font-size: 1.35rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge {
+            display: inline-flex;
+            /* ⭐ 讓它變成膠囊容器 */
+            align-items: center;
+            /* 垂直置中 */
+            justify-content: center;
+            /* 水平置中 */
+            font-size: 0.9rem;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.12);
+            color: #e5e7eb;
+            line-height: 1.1;
+            /* 避免文字貼到上緣 */
+        }
+
+
+        .badge.light {
+            background: rgba(15, 23, 42, 0.08);
+            color: #0f172a;
+        }
+
+        .desc {
+            margin: 0 0 10px;
+            font-size: 0.98rem;
+            color: var(--muted);
+        }
+
+        .step-card {
+            background: var(--card);
+            border-radius: 18px;
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            padding: 12px 14px;
+            margin-bottom: 10px;
+        }
+
+        .step-title {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 4px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            margin-top: 6px;
+            font-size: 0.96rem;
+        }
+
+        label {
+            font-size: 0.96rem;
+        }
+
+        input[type="file"],
+        input[type="number"],
+        input[type="text"] {
+            font-size: 0.96rem;
+            padding: 6px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            background: #f9fafb;
+            min-width: 0;
+        }
+
+        input[type="number"] {
+            width: 120px;
+        }
+
+        button {
+            border-radius: 999px;
+            border: none;
+            padding: 8px 15px;
+            font-size: 0.96rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(to right, #0f766e, #22c55e);
+            color: white;
+            box-shadow: 0 8px 16px rgba(34, 197, 94, 0.4);
+            margin-top: 6px;
+        }
+
+        button.secondary {
+            background: rgba(15, 23, 42, 0.9);
+            box-shadow: 0 6px 14px rgba(15, 23, 42, 0.45);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: default;
+            box-shadow: none;
+        }
+
+        .output-box {
+            margin-top: 8px;
+            border-radius: 14px;
+            background: var(--card-strong);
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            padding: 8px 10px;
+            max-height: 260px;
+            overflow: auto;
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo,
+                Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        .feature-field {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            padding: 6px 8px;
+            font-size: 0.95rem;
+        }
+
+        .feature-field input[type="number"],
+        .feature-field input[type="text"] {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .feature-field label {
+            display: block;
+            margin-bottom: 2px;
+            font-weight: 500;
+        }
+
+        .feature-field small {
+            display: block;
+            margin-top: 2px;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        /* === 左側預測結果區（技術版） === */
+        .prediction-result {
+            background: #f9fafb;
+            color: #0f172a;
+            border-radius: 18px;
+            padding: 16px 18px;
+            margin-top: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .prediction-result h3 {
+            margin: 0 0 6px;
+            font-size: 1.2rem;
+            font-weight: 650;
+        }
+
+        .prediction-score {
+            font-size: 2rem;
+            font-weight: 750;
+            color: #ca8a04;
+        }
+
+        .shap-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+            font-size: 0.98rem;
+        }
+
+        .shap-table th,
+        .shap-table td {
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            padding: 6px 8px;
+            text-align: left;
+        }
+
+        .shap-table th {
+            background: #0f172a;
+            color: #f9fafb;
+            font-weight: 650;
+        }
+
+        .shap-table tbody tr:nth-child(odd) {
+            background: #ffffff;
+        }
+
+        .shap-table tbody tr:nth-child(even) {
+            background: #e5edf7;
+        }
+
+        .aside-note {
+            font-size: 0.95rem;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        /* === 右側 Talent Compass 區 === */
+
+        .tc-score-card {
+            background: #0f172a;
+            color: #e5e7eb;
+            border-radius: 20px;
+            padding: 14px 16px;
+            border: 1px solid #020617;
+            margin-bottom: 12px;
+        }
+
+        .tc-score-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tc-score-label {
+            font-size: 0.98rem;
+            opacity: 0.9;
+        }
+
+        .tc-score-number {
+            font-size: 2.1rem;
+            font-weight: 750;
+            color: #facc15;
+            margin-top: 4px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.88rem;
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            background: #0b1120;
+            color: #e5e7eb;
+            gap: 4px;
+            margin-left: 4px;
+            white-space: nowrap;
+        }
+
+        .pill.level {
+            background: #22c55e1a;
+            border-color: #22c55e80;
+            color: #bbf7d0;
+        }
+
+        .pill.cluster {
+            background: #0ea5e91a;
+            border-color: #38bdf880;
+            color: #bae6fd;
+        }
+
+        .tc-score-note {
+            font-size: 0.88rem;
+            margin: 8px 0 0;
+            color: #cbd5f5;
+        }
+
+        .tc-section-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin: 10px 0 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tc-section-title span {
+            font-size: 1.1rem;
+        }
+
+        .tc-list {
+            margin: 4px 0 0 20px;
+            padding-left: 0;
+            font-size: 0.95rem;
+        }
+
+        .tc-list li+li {
+            margin-top: 3px;
+        }
+
+        .tc-metrics {
+            margin-top: 10px;
+            padding: 8px 10px;
+            border-radius: 14px;
+            background: #f9fafb;
+            border: 1px solid rgba(148, 163, 184, 0.9);
+            font-size: 0.9rem;
+        }
+
+        .tc-metrics-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tc-metric-pill {
+            padding: 4px 8px;
+            border-radius: 999px;
+            border: 1px dashed rgba(148, 163, 184, 0.9);
+            background: #ffffff;
+            font-size: 0.88rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="shell">
+        <header>
+            <div class="title-block">
+                <h1>可解釋 AI 人才發展模型｜研究版 Demo ＋ Talent Compass</h1>
+                <p>上傳研究資料 → 建立模型 → 輸入一位員工 → 左邊看模型、右邊看人才羅盤建議。</p>
+            </div>
+            <div class="nav">
+                <a href="index.html"><span>←</span> 回到說明頁</a>
+                <a href="sandbox.html">🧩 自由分群版本</a> <!-- ⭐ 新增這行 -->
+                <a href="#" onclick="window.location.reload(); return false;">🔄 重新整理頁面</a>
+            </div>
+        </header>
+
+        <main>
+            <!-- 左邊：訓練 + 特徵輸入 + 技術預測結果 -->
+            <section class="panel">
+                <h2>Step 1：上傳資料 & 建立模型 <span class="badge">研究版</span></h2>
+                <p class="desc">
+                    先上傳你在研究中使用的 <strong>完整資料集</strong>（包含 Performance_Score），後端會訓練 RandomForest 模型，
+                    並計算出「最重要的特徵」供下一步輸入。
+                </p>
+
+                <div class="step-card">
+                    <div class="step-title">1-1. 上傳資料並訓練</div>
+                    <form id="train-form">
+                        <div class="form-row">
+                            <label>上傳 CSV：
+                                <input type="file" id="train-file" accept=".csv" required />
+                            </label>
+                        </div>
+                        <div class="form-row">
+                            <label>測試集比例：
+                                <input type="number" id="test-size" value="0.2" step="0.05" min="0.1" max="0.4" />
+                            </label>
+                        </div>
+                        <button type="submit" id="btn-train">🚀 建立模型</button>
+                    </form>
+                    <div class="output-box" id="train-output">尚未訓練模型。</div>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-title">1-2. 輸入一位「員工」的關鍵特徵</div>
+                    <p class="desc">
+                        下方欄位會根據 SHAP 重要度自動帶出前幾名特徵，預設值來自訓練資料的「中位數／眾數」。
+                        你可以修改其中幾個欄位，看看模型如何改變預測。
+                    </p>
+                    <div id="feature-form">
+                        <p class="aside-note">請先完成上方「建立模型」，這裡才會出現可輸入的欄位。</p>
+                    </div>
+                    <button type="button" id="btn-predict" disabled>📈 預測績效分數 & 更新 Talent Compass</button>
+
+                    <div class="prediction-result" id="prediction-block" style="display:none;">
+                        <h3>預測結果（模型技術視角）</h3>
+                        <div>預測績效分數（Performance_Score）：</div>
+                        <div class="prediction-score" id="prediction-score">-</div>
+                        <div class="aside-note">
+                            數值愈高代表模型判定該員工「整體績效指標」愈高。此分數用來輔助判斷，不取代主管決策。
+                        </div>
+
+                        <h3 style="margin-top:10px;">主要影響因子（SHAP Top 10）</h3>
+                        <div class="aside-note">
+                            正值代表「把分數往上拉」；負值代表「把分數往下拉」。絕對值愈大，代表影響力愈強。
+                        </div>
+                        <table class="shap-table" id="shap-table">
+                            <thead>
+                                <tr>
+                                    <th>特徵</th>
+                                    <th>SHAP 值</th>
+                                    <th>|SHAP| 排名</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 右邊：Talent Compass 解讀區 -->
+            <section class="panel">
+                <h2>Step 2：觀看模型判讀 & 人才發展建議 <span class="badge">Talent Compass</span></h2>
+
+                <div class="tc-score-card">
+                    <div class="tc-score-row">
+                        <div>
+                            <div class="tc-score-label">預測績效分數（Performance_Score）</div>
+                            <div class="tc-score-number" id="tc-score-number">-</div>
+                        </div>
+                        <div>
+                            <span class="pill level" id="tc-perf-level">尚未預測</span>
+                            <span class="pill cluster" id="tc-cluster-name">—</span>
+                        </div>
+                    </div>
+                    <p class="tc-score-note" id="tc-score-note">
+                        請先在左側輸入一位員工的條件，按下「預測績效分數」，這裡會顯示所屬人才群組與文字建議。
+                    </p>
+                </div>
+
+                <div class="step-card">
+                    <div class="tc-section-title"><span>🌱</span> 建議的發展重點</div>
+                    <ul class="tc-list" id="tc-dev-points">
+                        <li>尚未預測，暫無內容。</li>
+                    </ul>
+
+                    <div class="tc-section-title" style="margin-top:10px;"><span>⚠️</span> 風險與提醒</div>
+                    <ul class="tc-list" id="tc-risk-alerts">
+                        <li>尚未預測，暫無內容。</li>
+                    </ul>
+
+                    <div class="tc-section-title" style="margin-top:10px;"><span>👔</span> 建議給 HR／主管行動</div>
+                    <ul class="tc-list" id="tc-hr-tips">
+                        <li>尚未預測，暫無內容。</li>
+                    </ul>
+                </div>
+
+                <div class="step-card">
+                    <div class="tc-section-title"><span>📊</span> 模型評估指標（摘要）</div>
+                    <div class="tc-metrics">
+                        <div class="tc-metrics-row">
+                            <div class="tc-metric-pill" id="tc-metric-rf">
+                                RandomForest：尚未訓練
+                            </div>
+                            <div class="tc-metric-pill" id="tc-metric-en">
+                                ElasticNet：尚未訓練
+                            </div>
+                        </div>
+                        <p class="aside-note" style="margin-top:8px;">
+                            指標為整體模型在測試資料上的表現，用來評估「模型可信度」，不代表個別員工的真實績效。
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const API_BASE = "http://127.0.0.1:8000";
+
+        // 🔹 固定版人才羅盤模板（對應論文 5.2.3 節：C0~C3）
+        const TALENT_CLUSTER_TEMPLATES = {
+            0: {
+                name: "高病假壓力型 (C0)",
+                short_title: "低薪、壓力訊號明顯，健康風險較高",
+                summary: "薪資與績效偏低，但病假天數最高（約 11 天），顯示可能處於高壓或健康失衡狀態。",
+                dev_focus: [
+                    "優先檢視工作負荷與排班，關注身心健康資源。",
+                    "提供壓力管理與基礎職能訓練，先求穩定再求績效。",
+                    "釐清是能力問題還是工作設計導致的倦怠。"
+                ],
+                risk_alerts: [
+                    "高病假率是明顯的離職或過勞前兆。",
+                    "若只用績效施壓，可能導致缺勤狀況更惡化。"
+                ],
+                hr_tips: [
+                    "主動進行關懷訪談（EAP），了解請假背後的真實原因。",
+                    "暫不宜賦予過高強度的專案，應先調整工作量配置。",
+                    "檢查是否有『低薪卻高責』的結構性問題。"
+                ]
+            },
+            1: {
+                name: "穩健資源型 (C1)",
+                short_title: "高薪、低加班、績效穩健的核心人才",
+                summary: "薪資較優渥，加班最少，績效中高且穩定，屬於組織內的穩健核心力量。",
+                dev_focus: [
+                    "賦予跨部門專案或導師（Mentor）角色，擴大影響力。",
+                    "鼓勵知識分享，將其經驗轉化為組織資產。",
+                    "維持其滿意度，避免因缺乏挑戰而停滯。"
+                ],
+                risk_alerts: [
+                    "雖表現穩定，但若缺乏新挑戰，可能產生舒適圈心態。",
+                    "需注意是否因『太好用』而未被規劃長期升遷路徑。"
+                ],
+                hr_tips: [
+                    "將其納入內部講師或接班人計畫（Succession Plan）。",
+                    "定期討論職涯下一步，確認其對現狀的滿意度。",
+                    "可作為新進員工的穩定帶領者。"
+                ]
+            },
+            2: {
+                name: "高投入成長型 (C2)",
+                short_title: "高薪、高加班、最高績效的衝刺者",
+                summary: "績效與薪資皆最高，但加班時數也最高（每週約 22 小時），是典型的「高投入高產出」族群。",
+                dev_focus: [
+                    "設計階段性挑戰與明確晉升階梯，將投入轉化為職涯資本。",
+                    "培養管理職能或專案管理能力，減少純體力加班。",
+                    "強制性的休息或休假機制，避免燃燒殆盡（Burnout）。"
+                ],
+                risk_alerts: [
+                    "長期高工時是雙面刃，極易導致突然的倦怠或跳槽。",
+                    "可能過度依賴『加班』來換取績效，而非提升效率。"
+                ],
+                hr_tips: [
+                    "密切監控工時數據，若連續數月過高需強制介入。",
+                    "給予高能見度的獎勵或公開表揚，滿足其成就動機。",
+                    "確認薪酬與獎金是否與其高投入相符，確保公平性。"
+                ]
+            },
+            3: {
+                name: "新秀潛力型 (C3)",
+                short_title: "低薪、高工時、高訓練、極少請假",
+                summary: "薪資偏低但工時長，訓練時數高且幾乎不請病假，顯示為積極學習但績效尚未完全展現的新秀。",
+                dev_focus: [
+                    "建立清晰的『能力階梯』，讓他知道努力後的具體回報。",
+                    "提供即時的績效回饋（Feedback），縮短學習曲線。",
+                    "搭配資深導師（如 C1 類型）帶領，避免無效努力。"
+                ],
+                risk_alerts: [
+                    "高投入卻低回報（低薪/低績效）的狀態不能維持太久，否則動機易崩盤。",
+                    "若長期未見起色，需檢視是否訓練方向錯誤。"
+                ],
+                hr_tips: [
+                    "明確溝通升遷標準與時程，給予『職涯希望感』。",
+                    "多給予非物質的鼓勵（如參與重要會議、學習機會）。",
+                    "定期檢核訓練成效，確保投入能轉換為實際產出。"
+                ]
+            }
+        };
+
+
+        let topFeatures = []; // 從後端拿到的「重要特徵＋預設值」
+        const featureFormEl = document.getElementById("feature-form");
+
+        function pretty(obj) {
+            try {
+                return JSON.stringify(obj, null, 2);
+            } catch {
+                return String(obj);
+            }
+        }
+
+        async function trainModel(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById("train-file");
+            const testSizeInput = document.getElementById("test-size");
+            const outputEl = document.getElementById("train-output");
+            const btnTrain = document.getElementById("btn-train");
+
+            if (!fileInput.files[0]) {
+                alert("請先選擇 CSV 檔案");
+                return;
+            }
+
+            const fd = new FormData();
+            fd.append("file", fileInput.files[0]);
+            fd.append("test_size", testSizeInput.value || "0.2");
+
+            outputEl.textContent = "後端訓練中，請稍候…";
+            btnTrain.disabled = true;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/train_model`, {
+                    method: "POST",
+                    body: fd,
+                });
+                if (!res.ok) {
+                    const text = await res.text();
+                    throw new Error(`HTTP ${res.status}: ${text}`);
+                }
+                const data = await res.json();
+                topFeatures = data.top_features || [];
+
+                outputEl.textContent = pretty({
+                    rows: data.n_rows,
+                    n_features: data.n_features,
+                    target_col: data.target_col,
+                    metrics: data.metrics,
+                    top_features_preview: topFeatures.map((f) => ({
+                        feature: f.feature,
+                        mean_abs_shap: f.mean_abs_shap,
+                        default: f.default,
+                    })),
+                });
+
+                renderFeatureForm(topFeatures);
+                document.getElementById("btn-predict").disabled = false;
+                // 同步更新右側指標
+                updateMetricsFromSummary();
+            } catch (err) {
+                console.error(err);
+                outputEl.textContent = `❌ 訓練失敗：${err.message}`;
+            } finally {
+                btnTrain.disabled = false;
+            }
+        }
+
+        function renderFeatureForm(features) {
+            if (!features || !Array.isArray(features)) {
+                features = topFeatures;
+            }
+
+            featureFormEl.innerHTML = "";
+
+            const info = document.createElement("p");
+            info.style.fontSize = "0.86rem";
+            info.style.color = "#64748b";
+            info.textContent =
+                "下列欄位為模型最重要的前幾個特徵。數值欄位請輸入合理數字；文字欄位請盡量使用提示中的「常見值範例」。欄位留白時，會使用訓練資料的預設值。";
+            featureFormEl.appendChild(info);
+
+            const grid = document.createElement("div");
+            grid.className = "feature-grid";
+            featureFormEl.appendChild(grid);
+
+            features.forEach((f) => {
+                const field = document.createElement("div");
+                field.className = "feature-field";
+
+                const label = document.createElement("label");
+                label.textContent = f.feature;
+                field.appendChild(label);
+
+                const input = document.createElement("input");
+                const isNumeric =
+                    f.value_type === "number" || typeof f.default === "number";
+
+                if (isNumeric) {
+                    input.type = "number";
+                    input.step = "0.01";
+                } else {
+                    input.type = "text";
+                }
+                if (f.default !== null && f.default !== undefined) {
+                    input.value = f.default;
+                }
+
+                input.dataset.feature = f.feature;
+                field.appendChild(input);
+
+                const small = document.createElement("small");
+                const parts = [];
+                if (f.hint) parts.push(f.hint);
+                parts.push(
+                    `SHAP 平均影響力：${(f.mean_abs_shap || 0).toFixed(4)}`
+                );
+                small.textContent = parts.join("｜");
+                field.appendChild(small);
+
+                grid.appendChild(field);
+            });
+        }
+
+        function collectFeaturePayload() {
+            const featureInputs = document.querySelectorAll("[data-feature]");
+            const payload = { features: {} };
+
+            featureInputs.forEach((input) => {
+                const name = input.getAttribute("data-feature");
+                let val = input.value;
+                if (val === "") {
+                    return; // 空值 → 讓後端用預設值
+                }
+                if (!isNaN(val) && val.trim() !== "") {
+                    const num = Number(val);
+                    if (!Number.isNaN(num)) {
+                        val = num;
+                    }
+                }
+                payload.features[name] = val;
+            });
+
+            return payload;
+        }
+
+        async function predictOnce() {
+            const btn = document.getElementById("btn-predict");
+            const scoreEl = document.getElementById("prediction-score");
+            const blockEl = document.getElementById("prediction-block");
+            const tableBody = document.querySelector("#shap-table tbody");
+
+            if (!topFeatures.length) {
+                alert("請先建立模型（Step 1）");
+                return;
+            }
+
+            const payload = collectFeaturePayload();
+
+            btn.disabled = true;
+            btn.textContent = "預測中…";
+
+            try {
+                // 同時呼叫：/api/predict（技術）＋ /api/talent_compass_predict（羅盤）
+                const [resPred, resCompass] = await Promise.all([
+                    fetch(`${API_BASE}/api/predict`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload),
+                    }),
+                    fetch(`${API_BASE}/api/talent_compass_predict`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload),
+                    }),
+                ]);
+
+                if (!resPred.ok) {
+                    const text = await resPred.text();
+                    throw new Error(`預測 API 失敗：HTTP ${resPred.status} ${text}`);
+                }
+                if (!resCompass.ok) {
+                    const text = await resCompass.text();
+                    throw new Error(`Talent Compass API 失敗：HTTP ${resCompass.status} ${text}`);
+                }
+
+                const dataPred = await resPred.json();
+                const dataCompass = await resCompass.json();
+                console.log("DEBUG talent_compass_predict 回傳：", dataCompass);
+
+
+                // ===== 左側：更新模型預測與 SHAP =====
+                const predVal = typeof dataPred.prediction === "number"
+                    ? dataPred.prediction
+                    : (typeof dataPred.performance_score === "number"
+                        ? dataPred.performance_score
+                        : NaN);
+                if (!Number.isNaN(predVal)) {
+                    scoreEl.textContent = predVal.toFixed(3);
+                } else {
+                    scoreEl.textContent = "-";
+                }
+                blockEl.style.display = "block";
+
+                tableBody.innerHTML = "";
+                (dataPred.shap_top_contrib || []).forEach((row, idx) => {
+                    const tr = document.createElement("tr");
+                    const tdFeature = document.createElement("td");
+                    tdFeature.textContent = row.feature;
+                    const tdVal = document.createElement("td");
+                    tdVal.textContent = row.shap_value.toFixed(5);
+                    const tdRank = document.createElement("td");
+                    tdRank.textContent = `#${idx + 1}`;
+                    tr.appendChild(tdFeature);
+                    tr.appendChild(tdVal);
+                    tr.appendChild(tdRank);
+                    tableBody.appendChild(tr);
+                });
+
+                // ===== 右側：更新 Talent Compass 內容 =====
+                updateTalentCompass(dataCompass, predVal);
+                updateMetricsFromSummary(); // 同步更新模型指標（如果還沒更新過）
+
+            } catch (err) {
+                alert(`預測失敗：${err.message}`);
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "📈 預測績效分數 & 更新 Talent Compass";
+            }
+        }
+
+
+        function fillList(element, items, emptyMsg) {
+            element.innerHTML = "";
+            if (!items || !items.length) {
+                const li = document.createElement("li");
+                li.textContent = emptyMsg;
+                element.appendChild(li);
+                return;
+            }
+            items.forEach((txt) => {
+                const li = document.createElement("li");
+                li.textContent = txt;
+                element.appendChild(li);
+            });
+        }
+
+        function updateTalentCompass(tc, fallbackPredVal) {
+            const scoreNumberEl = document.getElementById("tc-score-number");
+            const perfLevelEl = document.getElementById("tc-perf-level");
+            const clusterNameEl = document.getElementById("tc-cluster-name");
+            const noteEl = document.getElementById("tc-score-note");
+            const devListEl = document.getElementById("tc-dev-points");
+            const riskListEl = document.getElementById("tc-risk-alerts");
+            const hrListEl = document.getElementById("tc-hr-tips");
+
+            if (!tc || typeof tc !== "object") {
+                scoreNumberEl.textContent = "-";
+                perfLevelEl.textContent = "尚未預測";
+                clusterNameEl.textContent = "—";
+                noteEl.textContent = "未取得 Talent Compass 回傳內容。";
+                fillList(devListEl, null, "尚未預測，暫無內容。");
+                fillList(riskListEl, null, "尚未預測，暫無內容。");
+                fillList(hrListEl, null, "尚未預測，暫無內容。");
+                return;
+            }
+
+            // 🔹 分數
+            const predVal = typeof tc.prediction === "number"
+                ? tc.prediction
+                : (typeof tc.performance_score === "number"
+                    ? tc.performance_score
+                    : (typeof fallbackPredVal === "number" ? fallbackPredVal : NaN));
+
+            if (!Number.isNaN(predVal)) {
+                scoreNumberEl.textContent = predVal.toFixed(3);
+            } else {
+                scoreNumberEl.textContent = "-";
+            }
+
+            // 🔹 績效等級：一律用中文 HR 語言
+            const bandCode = tc.performance_band;
+            let perfLevel =
+                tc.perf_level ||
+                tc.performance_level ||
+                (bandCode === "high"
+                    ? "較高績效帶"
+                    : bandCode === "low"
+                        ? "相對偏低績效帶"
+                        : bandCode === "medium"
+                            ? "中等績效帶"
+                            : "尚未標定等級");
+            perfLevelEl.textContent = perfLevel;
+
+            // 🔹 人才群組名稱
+            const clusterId = typeof tc.cluster_id === "number" ? tc.cluster_id : null;
+            const clusterName =
+                tc.cluster_name ||
+                (clusterId !== null ? `第 ${clusterId} 群` : "—");
+            clusterNameEl.textContent = clusterName;
+
+            // 🔹 找對應的模板（優先用 id，其次用名稱）
+            const tpl =
+                (clusterId !== null ? TALENT_CLUSTER_TEMPLATES[clusterId] : null) ||
+                TALENT_CLUSTER_TEMPLATES[clusterName] ||
+                null;
+
+            // 🔹 上方那行短說明（群組一句話＋可選的百分位）
+            const percentile = typeof tc.percentile === "number"
+                ? (tc.percentile * 100).toFixed(1) + "%"
+                : null;
+            const shortTitle =
+                tc.cluster_short_title ||
+                (tpl && tpl.short_title) ||
+                "";
+
+            if (shortTitle && percentile) {
+                noteEl.textContent = `${shortTitle}（約落在整體樣本的第 ${percentile} 百分位）`;
+            } else if (shortTitle) {
+                noteEl.textContent = shortTitle;
+            } else if (percentile) {
+                noteEl.textContent =
+                    `約落在整體樣本的第 ${percentile} 百分位。建議搭配左側 SHAP 結果與實際績效紀錄一起討論。`;
+            } else if (tpl && tpl.summary) {
+                noteEl.textContent = tpl.summary;
+            } else {
+                noteEl.textContent =
+                    "此結果為研究模型的機器學習判斷，建議搭配實務觀察與主管評估一併使用。";
+            }
+
+            // 🔹 三種文字建議：先吃後端，如果是空的就用模板補
+            let devPoints =
+                tc.dev_points ||
+                tc.development_points ||
+                tc.dev_focus ||
+                [];
+            let riskAlerts =
+                tc.risk_alerts ||
+                tc.risk_points ||
+                [];
+            let hrTips =
+                tc.hr_tips ||
+                tc.hr_actions ||
+                tc.manager_actions ||
+                [];
+
+            if (tpl) {
+                if (!devPoints || !devPoints.length) devPoints = tpl.dev_focus;
+                if (!riskAlerts || !riskAlerts.length) riskAlerts = tpl.risk_alerts;
+                if (!hrTips || !hrTips.length) hrTips = tpl.hr_tips;
+            }
+
+            fillList(devListEl, devPoints, "尚未預測，暫無內容。");
+            fillList(riskListEl, riskAlerts, "尚未預測，暫無內容。");
+            fillList(hrListEl, hrTips, "尚未預測，暫無內容。");
+        }
+
+
+
+
+        async function updateMetricsFromSummary() {
+            const rfEl = document.getElementById("tc-metric-rf");
+            const enEl = document.getElementById("tc-metric-en");
+
+            try {
+                const res = await fetch(`${API_BASE}/api/model_summary`);
+                if (!res.ok) return;
+                const data = await res.json();
+                const m = data.metrics || {};
+
+                const rf = m.rf || m.RandomForest || {};
+                const en = m.elastic_net || m.ElasticNet || {};
+
+                if (Object.keys(rf).length) {
+                    rfEl.textContent =
+                        `RandomForest：R²(test) = ${rf.R2_test?.toFixed?.(3) ?? rf.R2_test ?? "-"} ｜ MAE = ${rf.MAE_test?.toFixed?.(3) ?? rf.MAE_test ?? "-"}`;
+                }
+                if (Object.keys(en).length) {
+                    enEl.textContent =
+                        `ElasticNet：R²(test) = ${en.R2_test?.toFixed?.(3) ?? en.R2_test ?? "-"} ｜ MAE = ${en.MAE_test?.toFixed?.(3) ?? en.MAE_test ?? "-"}`;
+                }
+            } catch (err) {
+                console.warn("讀取 model_summary 失敗：", err);
+            }
+        }
+
+        document
+            .getElementById("train-form")
+            .addEventListener("submit", trainModel);
+        document
+            .getElementById("btn-predict")
+            .addEventListener("click", predictOnce);
+    </script>
+</body>
+
+</html>
