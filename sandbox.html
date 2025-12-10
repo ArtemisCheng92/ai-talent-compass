@@ -781,7 +781,13 @@
     </div>
 
     <script>
-        const API_BASE = "http://127.0.0.1:8000";
+        const API_BASE =
+            window.location.hostname === "localhost" ||
+                window.location.hostname === "127.0.0.1" ||
+                window.location.protocol === "file:"
+                ? "http://127.0.0.1:8000"
+                : "https://ai-talent-compass.onrender.com";  // 這裡換成你真正的 Render 網址
+
 
         const FEATURE_LABELS = {
             Monthly_Salary: "月薪",
