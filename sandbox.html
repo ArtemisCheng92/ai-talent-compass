@@ -781,12 +781,35 @@
     </div>
 
     <script>
-        const API_BASE =
-            window.location.hostname === "localhost" ||
-                window.location.hostname === "127.0.0.1" ||
-                window.location.protocol === "file:"
-                ? "http://127.0.0.1:8000"
-                : "https://ai-talent-compass.onrender.com";  // 這裡換成你真正的 Render 網址
+        function resolveApiBase() {
+            try {
+                const url = new URL(window.location.href);
+                const apiParam = url.searchParams.get("api");
+
+                // 1️⃣ 如果網址有 ?api=，優先用它
+                if (apiParam) {
+                    // 把最後多餘的斜線砍掉，避免變成 //api/train_model
+                    return apiParam.replace(/\/+$/, "");
+                }
+
+                // 2️⃣ 沒有 ?api= 的情況：在你自己電腦上開發時使用本機
+                if (
+                    window.location.hostname === "localhost" ||
+                    window.location.hostname === "127.0.0.1" ||
+                    window.location.protocol === "file:"
+                ) {
+                    return "http://127.0.0.1:8000";
+                }
+
+                // 3️⃣ 其它情況（之後如果你又想回去用雲端，就可以改這裡）
+                return "http://127.0.0.1:8000";
+            } catch (e) {
+                console.warn("解析 API_BASE 失敗，退回本機 8000：", e);
+                return "http://127.0.0.1:8000";
+            }
+        }
+
+        const API_BASE = resolveApiBase();
 
 
         const FEATURE_LABELS = {
