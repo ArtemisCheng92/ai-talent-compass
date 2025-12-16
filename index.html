@@ -260,14 +260,15 @@
                         </p>
                     </div>
                     <div class="cta-btn-row">
-                        <a href="predict.html" class="cta-btn">
+                        <a href="predict.html" class="cta-btn btn-demo" data-keep-api>
                             <span class="icon">🚀</span>
                             <span>開啟實驗用預測 Demo</span>
                         </a>
-                        <a href="sandbox.html" class="cta-btn secondary">
+                        <a href="sandbox.html" class="cta-btn secondary btn-sandbox" data-keep-api>
                             <span class="icon">🎮</span>
                             <span>前往自由分群遊樂場</span>
                         </a>
+
                     </div>
                     <p class="note">
                         建議流程：先在 Demo 頁按「建立模型」，之後再到自由分群遊樂場調整 k（群數），比較不同分群輪廓。
@@ -276,6 +277,23 @@
             </aside>
         </main>
     </div>
+    <script>
+        // 讀取目前網址上的 ?api=... 參數
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            const apiOverride = params.get("api");
+            if (!apiOverride) return;  // 沒帶 api 的話就什麼都不做
+
+            // 找出所有有 data-keep-api 的連結，把 api 串進去
+            document.querySelectorAll("a[data-keep-api]").forEach(a => {
+                const href = a.getAttribute("href");
+                // 用 URL 物件處理，避免手動處理問號爆炸
+                const url = new URL(href, window.location.href);
+                url.searchParams.set("api", apiOverride);
+                a.href = url.toString();
+            });
+        })();
+    </script>
 </body>
 
 </html>

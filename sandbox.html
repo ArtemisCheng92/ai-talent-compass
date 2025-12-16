@@ -623,8 +623,8 @@
                 <p>共用同一份研究資料，只調整 k 值（群數），觀察不同分群下的輪廓變化。</p>
             </div>
             <div class="nav">
-                <a href="index.html">← 回到模型說明頁</a>
-                <a href="predict.html">🚀 前往實驗用預測 Demo</a>
+                <a href="index.html" class="breadcrumb-link" data-keep-api>← 回到模型說明頁</a>
+                <a href="predict.html" class="breadcrumb-link" data-keep-api>🚀 前往實驗用預測 Demo</a>
             </div>
         </header>
 
@@ -781,12 +781,61 @@
     </div>
 
     <script>
-        const API_BASE =
-            window.location.hostname === "localhost" ||
-                window.location.hostname === "127.0.0.1" ||
-                window.location.protocol === "file:"
-                ? "http://127.0.0.1:8000"
-                : "https://ai-talent-compass.onrender.com";  // 這裡換成你真正的 Render 網址
+        function resolveApiBase() {
+            try {
+                const url = new URL(window.location.href);
+                const apiParam = url.searchParams.get("api");
+
+                // 若網址上有 ?api=，優先用它並記到 localStorage
+                if (apiParam) {
+                    const clean = apiParam.replace(/\/+$/, "");
+                    localStorage.setItem("talent_api_base", clean);
+                    return clean;
+                }
+
+                // 若曾經存過，就沿用
+                const saved = localStorage.getItem("talent_api_base");
+                if (saved) {
+                    return saved;
+                }
+
+                // 如果前後端是同一個 domain（例如你之後放到同一台 server）
+                if (window.location.protocol.startsWith("http")) {
+                    return window.location.origin;  // 例如 https://yourhost.com
+                }
+
+                // 開發時或 file:// 就指到本機 8000
+                return "http://127.0.0.1:8000";
+            } catch (e) {
+                console.warn("解析 API_BASE 失敗，退回本機 8000：", e);
+                return "http://127.0.0.1:8000";
+            }
+        }
+
+        const API_BASE = resolveApiBase();
+
+
+
+        // 讓 ?api= 參數在頁面之間自動延續
+        (function propagateApiParam() {
+            try {
+                const url = new URL(window.location.href);
+                const apiParam = url.searchParams.get("api");
+                if (!apiParam) return;
+
+                document.querySelectorAll("a[data-keep-api]").forEach((a) => {
+                    const target = new URL(a.getAttribute("href"), window.location.href);
+                    target.searchParams.set("api", apiParam);
+                    a.href = target.toString();
+                });
+            } catch (e) {
+                console.warn("propagateApiParam 失敗：", e);
+            }
+        })();
+
+
+
+
 
 
         const FEATURE_LABELS = {
